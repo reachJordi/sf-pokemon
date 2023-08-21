@@ -38,10 +38,20 @@ public inherited sharing class Log {
     /**
      * @description Add a message to the buffer without publishing it.
      * Assumes a null severity
+     * @param messageToLog  The LogMessage to add to the buffer.
+     */
+    public Log add(LogMessage msg) {
+        buffer.add(msg);
+        return this;
+    }
+
+    /**
+     * @description Add a message to the buffer without publishing it.
+     * Assumes a null severity
      * @param messageToLog  The string message to add to the buffer.
      */
-    public void add(String messageToLog) {
-        this.add(messageToLog, null);
+    public Log add(String messageToLog) {
+        return this.add(messageToLog, null);
     }
 
     /**
@@ -49,12 +59,13 @@ public inherited sharing class Log {
      * @param messageToLog The string message to add to the buffer.
      * @param severity     LogSeverity enum
      */
-    public void add(String messageToLog, LogSeverity severity) {
+    public Log add(String messageToLog, LogSeverity severity) {
         LogMessage msg = new LogMessage(messageToLog);
         if (severity != null) {
             msg.severity = severity;
         }
         buffer.add(msg);
+        return this;
     }
 
     /**
@@ -62,8 +73,8 @@ public inherited sharing class Log {
      * publishing it. Assumes a null Severity
      * @param exceptionToLog Exception to format and log
      */
-    public void add(Exception exceptionToLog) {
-        this.add(exceptionToLog, null);
+    public Log add(Exception exceptionToLog) {
+        return this.add(exceptionToLog, null);
     }
 
     /**
@@ -72,25 +83,27 @@ public inherited sharing class Log {
      * @param exceptionToLog Exception to format and log
      * @param severity       LogSeverity enum
      */
-    public void add(Exception exceptionToLog, LogSeverity severity) {
+    public Log add(Exception exceptionToLog, LogSeverity severity) {
         LogMessage msg = new LogMessage(exceptionToLog);
         if (severity != null) {
             msg.severity = severity;
         }
         buffer.add(msg);
+        return this;
     }
 
     /**
      * @description Publish any messages currently in the buffer, without adding
      * any new ones.
      */
-    public void publish() {
+    public Log publish() {
         List<SObject> rawLogs = new List<SObject>();
         for (LogMessage msg : this.buffer) {
             rawLogs.add(msg.toEvent());
         }
         EventBus.publish(rawLogs);
         this.buffer.clear();
+        return this;
     }
 
     /**
@@ -100,9 +113,9 @@ public inherited sharing class Log {
      * usage.
      * @param exceptionToLog exception to format and log
      */
-    public void publish(Exception exceptionToLog) {
+    public Log publish(Exception exceptionToLog) {
         this.buffer.add(new LogMessage(exceptionToLog));
-        this.publish();
+        return this.publish();
     }
 
     /**
@@ -112,8 +125,8 @@ public inherited sharing class Log {
      * usage.
      * @param messageToLog String to log
      */
-    public void publish(String messageToLog) {
+    public Log publish(String messageToLog) {
         this.buffer.add(new LogMessage(messageToLog));
-        this.publish();
+        return this.publish();
     }
 }
