@@ -20,10 +20,9 @@ public with sharing class PokemonAPIUtil {
         return null;
     }
 
-     public static void getPokemonInformation(Integer pokemonNumber) {
+    public static Pokemon__c getPokemonInformation(Integer pokemonNumber) {
         String pokemonAPIResponse = getPokemonAPIResponse(pokemonNumber);
 
-        
         PokemonObjectJSON2Apex poke = new PokemonObjectJSON2Apex();
 		PokemonObjectJSON2Apex pokemonInfo = poke.parse(pokemonAPIResponse);
   
@@ -34,20 +33,32 @@ public with sharing class PokemonAPIUtil {
         pokemon.Weight__c = pokemonInfo.weight;
         pokemon.Height__c = pokemonInfo.height;
         pokemon.Order__c = pokemonInfo.order;
-        
-        if(Schema.sObjectType.Pokemon__c.isCreateable() && Schema.SObjectType.Pokemon__c.isUpdateable()) {
-            Schema.SObjectType objectType = Schema.getGlobalDescribe().get('Pokemon__c');
-            SObjectField field = objectType.getDescribe().fields.getMap().get('Id__c');
-            Database.upsert(pokemon, field, true);
-        }
-
-        // loop each stats, type, move and ability to create a new field or object
         // sprites contain pokemon images
         System.debug('sprites: ' + pokemonInfo.sprites);
+        pokemon.FrontDefaultDWURL__c = pokemonInfo.sprites.other.dream_world.front_default;
+        
+        // loop each stats, type, move and ability to create a new field or object
         System.debug('stats: ' + pokemonInfo.stats);
         System.debug('types: ' + pokemonInfo.types);
         System.debug('moves: ' + pokemonInfo.moves);
         System.debug('abilities: ' + pokemonInfo.abilities);
 
+        return pokemon;
+
+    }
+
+    @AuraEnabled 
+    public static void updatePokemonInformation(Integer pokemonNumber) {
+        try {
+            Pokemon__c pokemon = getPokemonInformation(pokemonNumber);
+            if(Schema.sObjectType.Pokemon__c.isCreateable() && Schema.SObjectType.Pokemon__c.isUpdateable()) {
+                Schema.SObjectType objectType = Schema.getGlobalDescribe().get('Pokemon__c');
+                SObjectField field = objectType.getDescribe().fields.getMap().get('Id__c');
+                Database.upsert(pokemon, field, true);
+            }
+        }catch(Exception e) {
+            System.debug('** Cause: ' + e.getCause());
+            System.debug('** StackTraceString: ' + e.getStackTraceString());
+        }
     }
 }

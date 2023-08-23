@@ -105,35 +105,6 @@ public class PokemonObjectJSON2Apex {
 		}
 	}
 	
-	public class Home {
-		public String front_default {get;set;} 
-		public Object front_female {get;set;} 
-		public String front_shiny {get;set;} 
-		public Object front_shiny_female {get;set;} 
-
-		public Home(JSONParser parser) {
-			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
-				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
-					String text = parser.getText();
-					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
-						if (text == 'front_default') {
-							front_default = parser.getText();
-						} else if (text == 'front_female') {
-							front_female = parser.readValueAs(Object.class);
-						} else if (text == 'front_shiny') {
-							front_shiny = parser.getText();
-						} else if (text == 'front_shiny_female') {
-							front_shiny_female = parser.readValueAs(Object.class);
-						} else {
-							System.debug(LoggingLevel.WARN, 'Home consuming unrecognized property: '+text);
-							consumeObject(parser);
-						}
-					}
-				}
-			}
-		}
-	}
-	
 	public class Ability {
 		public String name {get;set;} 
 
@@ -225,8 +196,7 @@ public class PokemonObjectJSON2Apex {
 	
 	public class Other {
 		public Dream_world dream_world {get;set;} 
-		public Home home {get;set;} 
-		public Official_artwork official_artwork {get;set;} // in json: official-artwork
+		public Official_artwork official_artwork {get;set;} 
 
 		public Other(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
@@ -235,9 +205,7 @@ public class PokemonObjectJSON2Apex {
 					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
 						if (text == 'dream_world') {
 							dream_world = new Dream_world(parser);
-						} else if (text == 'home') {
-							home = new Home(parser);
-						} else if (text == 'official-artwork') {
+						}else if (text == 'official-artwork') {
 							official_artwork = new Official_artwork(parser);
 						} else {
 							System.debug(LoggingLevel.WARN, 'Other consuming unrecognized property: '+text);

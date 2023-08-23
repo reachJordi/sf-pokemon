@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="Retrieve Pokemon" icon-name="custom:custom14">
+        
+        <div style="margin-top: 5px;">
+            <p>Enter a number between 1 and 151:</p>
+            <lightning-input label="Number" value={pokemonNumber} onchange={pokemonNumberHandler}></lightning-input>
+            <lightning-button 
+                variant="brand" 
+                label="Retrieve" 
+                title="Retrieve Pokemon Number" 
+                onclick={handleClick} 
+                class="slds-m-left_x-small">
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>
